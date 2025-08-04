@@ -1,0 +1,36 @@
+# fly.toml app configuration file generated for bn-bot on 2025-08-01T18:03:47+08:00
+#
+# 币安公告转发系统 - Fly.io 配置
+# 支持 WebSocket 长连接、AI 翻译、多渠道通知
+#
+
+app = 'bn-bot'
+primary_region = 'syd'
+
+[build]
+
+[http_service]
+  internal_port = 5010
+  force_https = true
+  auto_stop_machines = 'off'  # 禁用自动停止以支持长连接 WebSocket
+  auto_start_machines = true
+  min_machines_running = 1    # 保持至少一个实例运行
+  processes = ['app']
+
+# 持久化存储卷配置
+[mounts]
+  source = "bn_bot_data"
+  destination = "/app/data"
+
+# 环境变量配置
+[env]
+  NODE_ENV = "production"
+  PORT = "5010"
+  DATABASE_PATH = "/app/data/announcements.db"
+  LOG_LEVEL = "info"
+
+# 虚拟机资源配置（免费 tier）
+[[vm]]
+  memory = '256mb'    # 调整到免费 tier 限制
+  cpu_kind = 'shared'
+  cpus = 1

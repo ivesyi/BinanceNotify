@@ -1,0 +1,36 @@
+{
+  "binance": {
+    "wsUrl": "wss://api.binance.com/sapi/wss",
+    "topic": "com_announcement_en",
+    "recvWindow": 60000,
+    "heartbeatInterval": 30000,
+    "connectionLifetime": 86340000
+  },
+  "telegram": {
+    "enabled": false,
+    "messageTemplate": "📢 *币安公告*\n\n*标题:* {title}\n\n*分类:* {catalogName}\n\n*内容:* {body}\n\n{disclaimer}",
+    "retryAttempts": 3,
+    "retryDelay": 1000
+  },
+  "showdoc": {
+    "enabled": false,
+    "recipients": {},
+    "maxConcurrent": 3,
+    "messageTemplate": "📢 币安公告\n\n标题: {title}\n分类: {catalogName}\n\n内容: {body}",
+    "retryAttempts": 3,
+    "retryDelay": 1000
+  },
+  "filters": {
+    "enabled": true,
+    "enabledCategories": [],
+    "enabledKeywords": [],
+    "excludeKeywords": []
+  },
+  "monitoring": {
+    "enabled": true,
+    "port": 5010
+  },
+  "logging": {
+    "level": "info"
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "name": "binance-announcement-websocket",
+  "version": "1.0.0",
+  "description": "币安公告实时监听和转发系统",
+  "main": "src/main.js",
+  "scripts": {
+    "start": "node src/main.js",
+    "dev": "NODE_ENV=development nodemon src/main.js",
+    "monitor": "node examples/binance-announcement-websocket.js",
+    "monitor-1h": "node examples/binance-announcement-websocket.js 3600",
+    "docker:build": "docker build -t binance-announcement-bot .",
+    "docker:run": "docker-compose up -d",
+    "docker:stop": "docker-compose down",
+    "docker:logs": "docker-compose logs -f bn-bot",
+    "docker:health": "docker-compose exec bn-bot node -e \"require('http').get('http://localhost:5010/health', (res) => { console.log('Health check:', res.statusCode === 200 ? 'OK' : 'FAILED'); process.exit(res.statusCode === 200 ? 0 : 1) })\"",
+    "logs:clean": "rm -rf logs/*.log",
+    "setup": "mkdir -p logs data config"
+  },
+  "dependencies": {
+    "@ai-sdk/anthropic": "^1.2.12",
+    "@ai-sdk/openai-compatible": "^0.2.16",
+    "ai": "^4.3.19",
+    "axios": "^1.11.0",
+    "config": "^3.3.11",
+    "dotenv": "^16.6.1",
+    "express": "^4.19.2",
+    "joi": "^17.12.1",
+    "node-telegram-bot-api": "^0.66.0",
+    "nodemailer": "^6.9.9",
+    "sqlite3": "^5.1.7",
+    "winston": "^3.11.0",
+    "ws": "^8.14.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2"
+  },
+  "keywords": [
+    "binance",
+    "websocket",
+    "announcements",
+    "cms"
+  ],
+  "author": "",
+  "license": "MIT"
+}

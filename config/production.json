@@ -1,0 +1,35 @@
+{
+  "binance": {
+    "apiKey": "${BINANCE_API_KEY}",
+    "apiSecret": "${BINANCE_API_SECRET}"
+  },
+  "telegram": {
+    "enabled": "${TELEGRAM_ENABLED:false}",
+    "botToken": "${TELEGRAM_BOT_TOKEN}",
+    "chatId": "${TELEGRAM_CHAT_ID}"
+  },
+  "showdoc": {
+    "enabled": "${SHOWDOC_ENABLED:false}",
+    "pushUrl": "${SHOWDOC_PUSH_URL}"
+  },
+  "email": {
+    "enabled": "${EMAIL_ENABLED:false}",
+    "smtp": {
+      "host": "${EMAIL_SMTP_HOST}",
+      "port": "${EMAIL_SMTP_PORT:587}",
+      "secure": "${EMAIL_SMTP_SECURE:false}",
+      "auth": {
+        "user": "${EMAIL_SMTP_USER}",
+        "pass": "${EMAIL_SMTP_PASS}"
+      }
+    },
+    "from": "${EMAIL_FROM}",
+    "to": "${EMAIL_TO}"
+  },
+  "monitoring": {
+    "port": "${MONITORING_PORT:5010}"
+  },
+  "logging": {
+    "level": "${LOG_LEVEL:info}"
+  }
+}

@@ -1,0 +1,34 @@
+# 环境变量和敏感信息
+.env
+.env.local
+.env.production
+.env.development
+
+# API密钥文件
+*.key
+*.pem
+secrets/
+
+# 日志文件
+logs/
+*.log
+
+# Node modules
+node_modules/
+package-lock.json
+
+# 系统文件
+.DS_Store
+Thumbs.db
+
+# IDE配置
+.vscode/
+.idea/
+
+# 临时文件
+temp/
+tmp/
+
+# clauede相关文件
+.claude
+CLAUDE.md
