@@ -101,7 +101,7 @@ vim .env
 ### 云端部署
 
 #### ClawCloud Run 部署
-> 详细 Fly.io 云平台部署指南请见 [FLY-DEPLOY.md](FLY-DEPLOY.md)(CLAWCLOUD-DEPLOY.md)
+> 详细 Fly.io 云平台部署指南请见 [CLAWCLOUD-DEPLOY.md](CLAWCLOUD-DEPLOY.md)
 
 **部署特性**：
 - 💰 **成本可控**：每月$5免费额度，基础配置约$3-4/月，满足本项目应用场景
