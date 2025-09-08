@@ -250,6 +250,13 @@ class MessageRouter {
             if (hasExcludeKeyword) return false;
         }
         
+        // 排除分类
+        if (filters.excludeCategories && filters.excludeCategories.length > 0) {
+            const categoryMatch = filters.excludeCategories.includes(announcement.catalogId) ||
+                                  filters.excludeCategories.includes(announcement.catalogName);
+            if (categoryMatch) return false;
+        }
+        
         return true;
     }
 
