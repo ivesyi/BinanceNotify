@@ -3,6 +3,16 @@
     "apiKey": "${BINANCE_API_KEY}",
     "apiSecret": "${BINANCE_API_SECRET}"
   },
+  "twitter": {
+    "enabled": "${TWITTER_ENABLED:false}",
+    "appKey": "${TWITTER_APP_KEY}",
+    "appSecret": "${TWITTER_APP_SECRET}",
+    "accessToken": "${TWITTER_ACCESS_TOKEN}",
+    "accessSecret": "${TWITTER_ACCESS_SECRET}",
+    "minGoldScore": "${TWITTER_MIN_GOLD_SCORE:60}",
+    "retryAttempts": "${TWITTER_RETRY_ATTEMPTS:3}",
+    "retryDelay": "${TWITTER_RETRY_DELAY:1000}"
+  },
   "telegram": {
     "enabled": "${TELEGRAM_ENABLED:false}",
     "botToken": "${TELEGRAM_BOT_TOKEN}",

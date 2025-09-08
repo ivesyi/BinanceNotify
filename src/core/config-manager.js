@@ -44,6 +44,19 @@ class ConfigManager {
                 retryDelay: 1000
             },
 
+            // Twitter 推送配置
+            twitter: {
+                enabled: process.env.TWITTER_ENABLED === 'true',
+                appKey: process.env.TWITTER_APP_KEY,
+                appSecret: process.env.TWITTER_APP_SECRET,
+                accessToken: process.env.TWITTER_ACCESS_TOKEN,
+                accessSecret: process.env.TWITTER_ACCESS_SECRET,
+                messageTemplate: '【币安公告速报】\n标题：{title}\n分类：{catalogName}\n打金系数：{goldScore}/100\n{goldTips}\n发布时间：{publishTime}',
+                minGoldScore: parseInt(process.env.TWITTER_MIN_GOLD_SCORE) || 60,
+                retryAttempts: parseInt(process.env.TWITTER_RETRY_ATTEMPTS) || 3,
+                retryDelay: parseInt(process.env.TWITTER_RETRY_DELAY) || 1000
+            },
+
             // 数据库配置
             database: {
                 path: process.env.DATABASE_PATH || process.env.DB_PATH || path.join(__dirname, '../../data/announcements.db'),
@@ -68,6 +81,7 @@ class ConfigManager {
                 enabledCategories: this.parseArray(process.env.FILTER_CATEGORIES),
                 enabledKeywords: this.parseArray(process.env.FILTER_KEYWORDS),
                 excludeKeywords: this.parseArray(process.env.EXCLUDE_KEYWORDS),
+                excludeCategories: this.parseArray(process.env.EXCLUDE_CATEGORIES),
                 minTitleLength: parseInt(process.env.MIN_TITLE_LENGTH) || 5,
                 maxBodyLength: parseInt(process.env.MAX_BODY_LENGTH) || 5000
             },
@@ -141,7 +155,8 @@ class ConfigManager {
 
         // 验证通知渠道至少启用一个
         const notificationEnabled = this.config.telegram.enabled || 
-                                  this.config.showdoc.enabled;
+                                  this.config.showdoc.enabled ||
+                                  this.config.twitter.enabled;
         
         if (!notificationEnabled) {
             console.warn('⚠️  Warning: No notification channels enabled!');
@@ -161,6 +176,19 @@ class ConfigManager {
             
             if (!hasOldConfig && !hasNewConfig) {
                 throw new Error('ShowDoc enabled but missing SHOWDOC_PUSH_URL or SHOWDOC_RECIPIENTS');
+            }
+        }
+
+        // 验证Twitter配置
+        if (this.config.twitter.enabled) {
+            const t = this.config.twitter;
+            const missing = [];
+            if (!t.appKey) missing.push('TWITTER_APP_KEY');
+            if (!t.appSecret) missing.push('TWITTER_APP_SECRET');
+            if (!t.accessToken) missing.push('TWITTER_ACCESS_TOKEN');
+            if (!t.accessSecret) missing.push('TWITTER_ACCESS_SECRET');
+            if (missing.length > 0) {
+                throw new Error(`Twitter enabled but missing credentials: ${missing.join(', ')}`);
             }
         }
 
@@ -282,7 +310,8 @@ class ConfigManager {
     getNotificationConfig() {
         return {
             telegram: this.config.telegram,
-            showdoc: this.config.showdoc
+            showdoc: this.config.showdoc,
+            twitter: this.config.twitter
         };
     }
 

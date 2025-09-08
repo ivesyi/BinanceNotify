@@ -1,6 +1,8 @@
 const TelegramNotifier = require('../notifiers/telegram-notifier');
 const ShowDocNotifier = require('../notifiers/showdoc-notifier');
+const TwitterNotifier = require('../notifiers/twitter-notifier');
 const TranslationService = require('../services/translation-service');
+const GoldScoringService = require('../services/gold-scoring-service');
 const crypto = require('crypto');
 
 class MessageRouter {
@@ -9,6 +11,7 @@ class MessageRouter {
         this.dbService = dbService;
         this.notifiers = {};
         this.translationService = new TranslationService(config);
+        this.goldScoringService = new GoldScoringService(config);
         this.stats = {
             messagesReceived: 0,
             messagesProcessed: 0,
@@ -25,6 +28,10 @@ class MessageRouter {
         
         if (this.config.get('showdoc.enabled')) {
             this.notifiers.showdoc = new ShowDocNotifier(this.config);
+        }
+        
+        if (this.config.get('twitter.enabled')) {
+            this.notifiers.twitter = new TwitterNotifier(this.config);
         }
         
         console.log(`✅ 消息路由器初始化完成，启用的通知渠道: ${Object.keys(this.notifiers).join(', ')}`);
@@ -62,11 +69,48 @@ class MessageRouter {
                 }
             }
             
+            // 如启用AI翻译，已在上文处理
+
+            // 计算打金系数
+            let goldScore = null;
+            try {
+                goldScore = await this.goldScoringService.scoreAnnouncement(translatedAnnouncement);
+                translatedAnnouncement.goldScore = goldScore;
+            } catch (e) {
+                console.error('⚠️ 打金系数计算失败:', e.message);
+            }
+
+            // Twitter 中文与阈值前置过滤（只影响twitter，不影响其它渠道）
+            const filters = this.config.get('filters') || {};
+            const excludeCategories = filters.excludeCategories || [];
+            const excludeKeywords = filters.excludeKeywords || [];
+            const titleLower = (translatedAnnouncement.translatedTitle || translatedAnnouncement.title || '').toLowerCase();
+            const bodyLower = (translatedAnnouncement.translatedBody || translatedAnnouncement.body || '').toLowerCase();
+            const contentLower = `${titleLower} ${bodyLower}`;
+
+            const twitterMinScore = this.config.get('twitter.minGoldScore') || 60;
+            const isExcludedCategory = excludeCategories.includes(translatedAnnouncement.catalogId) || excludeCategories.includes(translatedAnnouncement.catalogName);
+            const hasExcludedKeyword = excludeKeywords.some(k => contentLower.includes(String(k).toLowerCase()));
+
+            if (this.notifiers.twitter) {
+                // 如果不满足条件，临时禁用twitter发送（仅本次路由）
+                const allowTwitter = (!!goldScore && goldScore.score >= twitterMinScore) && !isExcludedCategory && !hasExcludedKeyword;
+                if (!allowTwitter) {
+                    // 用一个标志在结果里体现过滤原因
+                    translatedAnnouncement.__twitterFiltered = true;
+                }
+            }
+
             // 发送到所有启用的通知渠道
             const results = [];
             const promises = [];
             
             for (const [name, notifier] of Object.entries(this.notifiers)) {
+                if (name === 'twitter' && translatedAnnouncement.__twitterFiltered) {
+                    // 跳过twitter
+                    results.push({ name, success: false, error: 'Twitter filtered by rules' });
+                    continue;
+                }
                 promises.push(
                     notifier.sendWithRetry(translatedAnnouncement)
                         .then(result => ({ name, ...result }))

@@ -20,11 +20,19 @@
     "retryAttempts": 3,
     "retryDelay": 1000
   },
+  "twitter": {
+    "enabled": false,
+    "messageTemplate": "【币安公告速报】\n标题：{title}\n分类：{catalogName}\n打金系数：{goldScore}/100\n{goldTips}\n发布时间：{publishTime}",
+    "minGoldScore": 60,
+    "retryAttempts": 3,
+    "retryDelay": 1000
+  },
   "filters": {
     "enabled": true,
     "enabledCategories": [],
     "enabledKeywords": [],
-    "excludeKeywords": []
+    "excludeKeywords": [],
+    "excludeCategories": []
   },
   "monitoring": {
     "enabled": true,
